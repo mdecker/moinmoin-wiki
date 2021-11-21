@@ -1,8 +1,8 @@
 # VERSION 0.7
 # AUTHOR:         Michael Decker <mde.proj@gmail.com>
-# DESCRIPTION:    Image with MoinMoin wiki, uwsgi, nginx and self signed SSL
+# DESCRIPTION:    Image with MoinMoin wiki, uwsgi, nginx
 # TO_BUILD:       docker build -t moinmoin .
-# TO_RUN:         docker run -d -p 80:80 -p 443:443 --name my_wiki moinmoin
+# TO_RUN:         docker run -d -p 80:80 --name my_wiki moinmoin
 
 FROM debian:buster-slim
 MAINTAINER Michael Decker <mde.proj@gmail.com>
@@ -15,7 +15,6 @@ ENV MM_CSUM 02be31d55f39d4fe0c6253df8b49e01b76d095634cbd1b56d185f66e1e0c3cf5
 RUN apt-get update && apt-get install -qqy --no-install-recommends \
   python2.7 \
   curl \
-  openssl \
   nginx \
   uwsgi \
   uwsgi-plugin-python \
@@ -46,15 +45,10 @@ ADD logo.png /usr/local/lib/python2.7/dist-packages/MoinMoin/web/static/htdocs/c
 # Configure nginx
 ADD nginx.conf /etc/nginx/
 ADD moinmoin-nossl.conf /etc/nginx/sites-available/
-ADD moinmoin-ssl.conf /etc/nginx/sites-available/
 RUN mkdir -p /var/cache/nginx/cache
 RUN rm /etc/nginx/sites-enabled/default
-
-# Create self signed certificate
-ADD generate_ssl_key.sh /usr/local/bin/
-RUN /usr/local/bin/generate_ssl_key.sh moinmoin.example.org
-RUN mv cert.pem /etc/ssl/certs/
-RUN mv key.pem /etc/ssl/private/
+RUN ln -sf /etc/nginx/sites-available/moinmoin-nossl.conf \
+        /etc/nginx/sites-enabled/moinmoin.conf
 
 # Cleanup
 RUN rm moin-$MM_VERSION.tar.gz
@@ -69,6 +63,5 @@ ADD start.sh /usr/local/bin/
 VOLUME /usr/local/share/moin/data
 
 EXPOSE 80
-EXPOSE 443
 
 CMD start.sh
