@@ -8,8 +8,8 @@ FROM debian:buster-slim
 MAINTAINER Olav Grønås Gjerde <olav@backupbay.com>
 
 # Set the version you want of MoinMoin
-ENV MM_VERSION 1.9.10
-ENV MM_CSUM 6ae110a22a23bfa6dd5c149b8d66f7ad34976d5d
+ENV MM_VERSION 1.9.11
+ENV MM_CSUM 02be31d55f39d4fe0c6253df8b49e01b76d095634cbd1b56d185f66e1e0c3cf5
 
 # Install software
 RUN apt-get update && apt-get install -qqy --no-install-recommends \
@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -qqy --no-install-recommends \
 # Download MoinMoin
 RUN curl -OkL \
   https://github.com/moinwiki/moin-1.9/releases/download/$MM_VERSION/moin-$MM_VERSION.tar.gz
-RUN if [ "$MM_CSUM" != "$(sha1sum moin-$MM_VERSION.tar.gz | awk '{print($1)}')" ];\
+RUN if [ "$MM_CSUM" != "$(sha256sum moin-$MM_VERSION.tar.gz | awk '{print($1)}')" ];\
   then exit 1; fi;
 RUN mkdir moinmoin
 RUN tar xf moin-$MM_VERSION.tar.gz -C moinmoin --strip-components=1
