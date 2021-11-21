@@ -1,11 +1,11 @@
 # VERSION 0.7
-# AUTHOR:         Olav Grønås Gjerde <olav@backupbay.com>
+# AUTHOR:         Michael Decker <mde.proj@gmail.com>
 # DESCRIPTION:    Image with MoinMoin wiki, uwsgi, nginx and self signed SSL
 # TO_BUILD:       docker build -t moinmoin .
 # TO_RUN:         docker run -d -p 80:80 -p 443:443 --name my_wiki moinmoin
 
 FROM debian:buster-slim
-MAINTAINER Olav Grønås Gjerde <olav@backupbay.com>
+MAINTAINER Michael Decker <mde.proj@gmail.com>
 
 # Set the version you want of MoinMoin
 ENV MM_VERSION 1.9.11
@@ -32,13 +32,13 @@ RUN tar xf moin-$MM_VERSION.tar.gz -C moinmoin --strip-components=1
 
 # Install MoinMoin
 RUN cd moinmoin && python2.7 setup.py install --force --prefix=/usr/local
-ADD wikiconfig.py /usr/local/share/moin/
 RUN chown -Rh www-data:www-data /usr/local/share/moin/underlay
 USER root
 
 # Copy default data into a new folder, we will use this to add content
 # if you start a new container using volumes
 RUN cp -r /usr/local/share/moin/data /usr/local/share/moin/bootstrap-data
+ADD wikiconfig.py /usr/local/share/moin/bootstrap-data/
 
 RUN chown -R www-data:www-data /usr/local/share/moin/data
 ADD logo.png /usr/local/lib/python2.7/dist-packages/MoinMoin/web/static/htdocs/common/

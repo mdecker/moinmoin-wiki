@@ -28,6 +28,6 @@ service rsyslog start && service nginx start && uwsgi \
     --wsgi-file server/moin.wsgi \
     -M -p 4 \
     --chdir /usr/local/share/moin \
-    --python-path /usr/local/share/moin \
+    --python-path /usr/local/share/moin/data \
     --harakiri 30 \
     --die-on-term
