@@ -1,0 +1,15 @@
+version: "3"
+
+services:
+  moinmoin-wiki:
+    image: mde4711/moinmoin
+    container_name: moinmoin-wiki
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    volumes:
+      - /opt/moinmoin-data:/usr/local/share/moin/data
+    ports:
+      - 8080:80
+    restart: always
+
